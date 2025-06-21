@@ -116,7 +116,7 @@ export class Misbehavior extends Schema.Class<Misbehavior>("Misbehavior")({
   description: Schema.String,
   /** The severity score of the misbehavior on a scale from 1-5 */
   severity: Severity
-}) { }
+}) {}
 
 export class Pun extends Schema.Class<Pun>("Pun")({
   /** The setup line for the pun */
@@ -125,7 +125,7 @@ export class Pun extends Schema.Class<Pun>("Pun")({
   punchline: Schema.String,
   /** The likelihood that a pun will induce a groan from its recipient on a scale from 1-100 */
   groanPotential: PositiveInt.pipe(Schema.between(1, 100))
-}) { }
+}) {}
 
 export const DurationFromSeconds = Schema.transform(
   /**
@@ -166,4 +166,4 @@ export class PunDeliveryReport extends Schema.Class<PunDeliveryReport>("PunDeliv
     /** Score representing the overall success of the pun delivery (0-100) */
     deliveryEffectiveness: PositiveInt.pipe(Schema.between(1, 100))
   })
-}) { }
+}) {}

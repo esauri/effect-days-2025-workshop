@@ -14,7 +14,7 @@ Effect.gen(function*() {
     // Define a finalizer for the resource. Finalizers have
     // access to the `Exit` value provided when the `Scope`
     // is closed (via `Scope.close`), which is usually the
-    // `Exit` value of scoped Effect that was executed. 
+    // `Exit` value of scoped Effect that was executed.
     //
     // ┌─── string
     // │        ┌─── Exit<unknown, unknown>
