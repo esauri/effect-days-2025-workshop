@@ -22,6 +22,12 @@ const testPun = Pun.make({
 
 const testEvaluation = "Pun Evaluation Report"
 
+// Create an actual implementation of the `PunsterClient` service
+const PunsterClientService = PunsterClient.of({
+  createPun: () => Effect.succeed(testPun),
+  evaluatePun: () => Effect.succeed(testEvaluation)
+})
+
 export const main = Effect.gen(function*() {
   const punster = yield* PunsterClient
   yield* punster.createPun(Misbehavior.make({
@@ -30,4 +36,8 @@ export const main = Effect.gen(function*() {
     description: "A test misbehavior",
     severity: 1
   }))
-})
+}).pipe(
+  // Provide an implementation of the `PunsterClient` service to the `main` program
+  // So that PunsterClient runs
+  Effect.provideService(PunsterClient, PunsterClientService)
+)
