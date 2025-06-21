@@ -1,4 +1,4 @@
-import { Effect } from "effect"
+import { Console, Effect } from "effect"
 
 // A pre-defined list of misbehaviors
 import { misbehaviors } from "./fixtures/Misbehaviors.js"
@@ -35,4 +35,21 @@ import { PunsterClient } from "./shared/services/PunsterClient.js"
 
 export const main = Effect.gen(function*() {
   // Your logic goes here
+  const punsterClient = yield* PunsterClient
+  const punDistributionNetwork = yield* PunDistributionNetwork
+
+  for (const misbehavior of misbehaviors) {
+    const channel = yield* punDistributionNetwork.getChannel(misbehavior)
+
+    // Since we want to log errors on `ChildImmuneError` and `PunsterFetchError`,
+    // we can pipe the `createPun` and `deliverPun` methods to catch these errors and log them.
+    yield* punsterClient.createPun(misbehavior).pipe(
+      Effect.andThen((pun) => punDistributionNetwork.deliverPun(pun, misbehavior, channel)),
+      Effect.andThen((result) => Console.log(`${misbehavior.childName} was punished with ${result}`)),
+      Effect.catchTags({
+        ChildImmuneError: () => Effect.logWarning(`Child ${misbehavior.childName} is immune, using immunity token`),
+        PunsterFetchError: () => Effect.logError(`Failed to fetch pun for misbehavior: ${misbehavior}`)
+      })
+    )
+  }
 })
