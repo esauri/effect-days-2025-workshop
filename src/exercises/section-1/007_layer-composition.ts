@@ -1,4 +1,4 @@
-import type { Layer } from "effect"
+import { Layer } from "effect"
 
 /**
  * **Todo List**:
@@ -28,13 +28,15 @@ export declare const ApiLayer: Layer.Layer<"Api", "ApiError", "Auth" | "Cache">
 export declare const MetricsLayer: Layer.Layer<"Metrics", "MetricsError", "Logging">
 export declare const NotificationLayer: Layer.Layer<"Notification", "NotifyError", "Logging" | "Config">
 
+const loggingLayer = Layer.provide(LoggingLayer, ConfigLayer)
+
 // ===========================
 // Exercise 1
 // ===========================
 
 // Target: Layer<"Config" | "Logging", "ConfigError" | "LogError", never>
 
-export const exercise1 = null // Your solution here
+export const exercise1 = Layer.merge(ConfigLayer, loggingLayer) // Your solution here
 
 // ===========================
 // Exercise 2
@@ -42,7 +44,7 @@ export const exercise1 = null // Your solution here
 
 // Target: Layer<"Database", "DbError" | "ConfigError", never>
 
-export const exercise2 = null // Your solution here
+export const exercise2 = Layer.provide(DatabaseLayer, ConfigLayer) // Your solution here
 
 // ===========================
 // Exercise 3
@@ -50,7 +52,7 @@ export const exercise2 = null // Your solution here
 
 // Target: Layer<"Cache", "CacheError" | "DbError" | "ConfigError", never>
 
-export const exercise3 = null // Your solution here
+export const exercise3 = Layer.provide(CacheLayer, exercise2) // Your solution here
 
 // ===========================
 // Exercise 4
@@ -58,7 +60,7 @@ export const exercise3 = null // Your solution here
 
 // Target: Layer<"Auth", "AuthError" | "ConfigError" | "DbError", never>
 
-export const exercise4 = null // Your solution here
+export const exercise4 = Layer.provide(AuthLayer, Layer.provideMerge(DatabaseLayer, ConfigLayer)) // Your solution here
 
 // ===========================
 // Exercise 5
@@ -66,7 +68,7 @@ export const exercise4 = null // Your solution here
 
 // Target: Layer<"Api", "ApiError" | "AuthError" | "CacheError" | "DbError" | "ConfigError", never>
 
-export const exercise5 = null // Your solution here
+export const exercise5 = Layer.provide(ApiLayer, Layer.merge(exercise3, exercise4)) // Your solution here
 
 // ===========================
 // Exercise 6
@@ -74,7 +76,7 @@ export const exercise5 = null // Your solution here
 
 // Target: Layer<"Metrics" | "Logging", "MetricsError" | "LogError" | "ConfigError", never>
 
-export const exercise6 = null // Your solution here
+export const exercise6 = Layer.provideMerge(MetricsLayer, loggingLayer) // Your solution here
 
 // ===========================
 // Exercise 7
@@ -82,7 +84,9 @@ export const exercise6 = null // Your solution here
 
 // Target: Layer<"Metrics" | "Notification", "MetricsError" | "NotifyError" | "LogError" | "ConfigError", never>
 
-export const exercise7 = null // Your solution here
+const metricsLayer = Layer.provide(MetricsLayer, loggingLayer)
+const notificationsLayer = Layer.provide(NotificationLayer, exercise1)
+export const exercise7 = Layer.merge(metricsLayer, notificationsLayer) // Your solution here
 
 // ===========================
 // Exercise 8
@@ -98,4 +102,7 @@ export const exercise7 = null // Your solution here
 //   never
 // >
 
-export const exercise8 = null // Your solution here
+export const exercise8 = Layer.merge(
+  exercise5,
+  exercise7
+) // Your solution here
